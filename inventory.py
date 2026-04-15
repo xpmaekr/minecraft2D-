@@ -3,6 +3,7 @@ import cfiles
 import lev_load
 
 inventory=None
+crafting_table=None
 inv_state=False
 inv_store=[]
 inv_n=0
@@ -10,7 +11,7 @@ inv_n=0
 def init_inventory():
     global inventory,grass,rock,items 
     inventory=cfiles.loadimagesize('D:/history/minecraft2D/inventory.jpg',1468,713)
-    
+    crafting_table=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',50,50)   
     grass=pygame.image.load('D:/history/minecraft2D/editor/imgs/1 Tiles/Tile_18.png')
     grass=pygame.transform.scale(grass,[lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7])
     
@@ -56,20 +57,25 @@ class Item:
 def render(screen):
     if inv_state == True:
         screen.blit(inventory, [10, 10])
+        screen.blit(crafting_table, [1478, 20])
     
         for i in items:
             i.render()
             i.get_hitbox()
 
-def add_type(res_type):
+table_box=pygame.Rect(1478,20,
+                    50,
+                    50)
+
+def add_type(res_type,count):
     for i in items:
         if i.name_res == res_type:
-            i.count_res += 1
+            i.count_res += count
             return
     
     for i in items:
         if i.count_res == 0:
             i.name_res = res_type
-            i.count_res += 1
+            i.count_res += count
             res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
             return

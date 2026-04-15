@@ -342,11 +342,20 @@ while True:
                         lev_load.blocks[(x_ts,y_ts)]['hp']-=damage
                         if lev_load.blocks[(x_ts,y_ts)]['hp']<1:
                             lev_load.blocks[(x_ts,y_ts)]['hp']-=damage
-                            inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'])
+                            inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'],1)
                             del lev_load.blocks[(x_ts,y_ts)]
             else:           #перемещение блоков в инв
+                
 
                 for i in inventory.items:
+                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count.res>3:
+                        if i.count.res==4:
+                            i.name_res=='craft table'
+                            i.count_res==1
+                        else:
+                            inventory.add_type('craft table')
+                        
+
                     if i.count_res>0 and i.get_hitbox().collidepoint(pos):
                             old_place=[i.xt,i.yt]
                             drag_ob_inf=[
