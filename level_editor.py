@@ -10,16 +10,16 @@ d=w=a=s=False
 
 block_stages={}
 block_stage1=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 1.png',80,80)
-block_stage2=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 2.png',80,80)
-block_stage3=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 3 .png',80,80)
-block_stage4=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 4.png',80,80)
+block_stage2=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 2.png',80,80)
+block_stage3=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 3 .png',80,80)
+block_stage4=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 4.png',80,80)
 
 block_stages['20']=block_stage4
 block_stages['40']=block_stage3
 block_stages['60']=block_stage2
 block_stages['80']=block_stage1
 
-idle=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
+idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 
 
@@ -33,20 +33,23 @@ camerax=cameray=0
 resourses=[]
 state_res=17
 
-tree_tex=pygame.image.load("D:/history/minecraft2D/tree_tex.jpg")
+tree=pygame.image.load('tree.jpg')
 leaf_tex=pygame.image.load('leaf_tex.png')
+craft_table=pygame.image.load('crafting table.png')
 
 blocks={}
 
-for i in os.listdir('editor/imgs/1 Tiles'):
+for i in sorted(os.listdir('editor/imgs/1 Tiles')):
     image=pygame.image.load('editor/imgs/1 Tiles/'+i)
     image=pygame.transform.scale(image,[tile_sizes,tile_sizes])
     resourses.append(image)
 
 resourses.append(idle[0])
 resourses.append(gidle[0])
-resourses.append(tree_tex)
+resourses.append(tree)
 resourses.append(leaf_tex)
+resourses.append(craft_table)
+
 
 def render_blocks():
     for i in blocks.values():
@@ -83,13 +86,13 @@ def change_size():
     image1=pygame.transform.scale(image1,[tile_sizes,tile_sizes])     
     image2=gidle[0]
     image2=pygame.transform.scale(image2,[tile_sizes,tile_sizes])   
-    image3=tree_tex
+    image3=tree
     image3=pygame.transform.scale(image3,[tile_sizes,tile_sizes])  
     image4=leaf_tex
     image4=pygame.transform.scale(image4,[tile_sizes,tile_sizes])  
 
 
-    for i in os.listdir('editor/imgs/1 Tiles'):
+    for i in sorted(os.listdir('editor/imgs/1 Tiles')):
         image=pygame.image.load('editor/imgs/1 Tiles/'+i)
         image=pygame.transform.scale(image,[tile_sizes,tile_sizes])
         resourses.append(image)
@@ -190,12 +193,12 @@ def get_type(number):
     return(type)
 
 def save():
-    f=open('D:\history\minecraft2D\editor\levels\level1','wb')
+    f=open('editor/levels/level1','wb')
     pickle.dump([blocks,[camerax,cameray]],f)
     f.close()
 def load():
     global blocks,camerax,cameray
-    f=open('D:\history\minecraft2D\editor\levels\level1','rb')
+    f=open('editor/levels/level1','rb')
     load_game=pickle.load(f)
     blocks=load_game[0]
     camerax=load_game[1][0]
@@ -284,6 +287,11 @@ while True:
     if w:
         cameray=cameray-10
 
+    hpblocks={'leaf' : 20,
+              'tree' : 100,
+              'rock' : 100,
+              'grass' : 100,}
+
     if pygame.mouse.get_pressed()[0]:
             mx=pygame.mouse.get_pos()[0]
             my=pygame.mouse.get_pos()[1]
@@ -297,7 +305,7 @@ while True:
                 'y': ypos_box//tile_sizes,
                 'number': state_res,
                 'type': get_type(state_res),
-                'hp': 100
+                'hp':hpblocks[get_type(state_res)]
                 
             }
             print(block)

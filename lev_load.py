@@ -11,23 +11,41 @@ import os
 
 def load():
     global blocks,camerax,cameray,pix
-    f=open('D:/history/minecraft2D/editor/levels/level1','rb')
+    f=open('editor/levels/level1','rb')
     load_game=pickle.load(f)
     blocks=load_game[0]
     camerax=load_game[1][0]
     cameray=load_game[1][1]
     f.close()
-    pix=pygame.image.load('D:/history/minecraft2D/pixare.png')
+    pix=pygame.image.load('pixare.png')
     pix=pygame.transform.flip(pix,True,False)
     pygame.mouse.set_visible(False) 
 
 resourses=[]
 tile_sizes=80
-for i in os.listdir('editor/imgs/1 Tiles'):
+for i in sorted(os.listdir('editor/imgs/1 Tiles')):
     image=pygame.image.load('editor/imgs/1 Tiles/'+i)
     image=pygame.transform.scale(image,[tile_sizes,tile_sizes])
     
     resourses.append(image)
+
+tree=pygame.image.load('tree_tex.jpg')
+tree=cfiles.loadimagesize('tree_tex.jpg',80,80)   
+
+leaf=pygame.image.load('leaf_tex.png')
+leaf=cfiles.loadimagesize('leaf_tex.png',80,80)
+
+craft_table=pygame.image.load('crafting table.png')
+craft_table=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',80,80)   
+
+idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
+gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
+
+resourses.append(idle[0])
+resourses.append(gidle[0])
+resourses.append(tree)
+resourses.append(leaf)
+resourses.append(craft_table)
 
 def render_blocks(screen):
     for i in blocks.values():
