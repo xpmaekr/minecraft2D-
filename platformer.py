@@ -15,29 +15,29 @@ clock=pygame.time.Clock()
 
 # кеш для стадий разрушения
 block_stages_cache={}
-block_stage1=cfiles.loadimagesize('D:/history/minecraft2D/break_blocks/блоки-removebg-preview 1.png',80,80)
-block_stage2=cfiles.loadimagesize('D:/history/minecraft2D/break_blocks/блоки-removebg-preview 2.png',80,80)
-block_stage3=cfiles.loadimagesize('D:/history/minecraft2D/break_blocks/блоки-removebg-preview 3 .png',80,80)
-block_stage4=cfiles.loadimagesize('D:/history/minecraft2D/break_blocks/блоки-removebg-preview 4.png',80,80)
+block_stage1=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 1.png',80,80)
+block_stage2=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 2.png',80,80)
+block_stage3=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 3 .png',80,80)
+block_stage4=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 4.png',80,80)
 
 block_stages_cache[20]=block_stage4
 block_stages_cache[40]=block_stage3
 block_stages_cache[60]=block_stage2
 block_stages_cache[80]=block_stage1
 
-idle=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png', 4, 3)
-walk=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png', 6, 3)
-run=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_run_6.png', 6, 3)
-jump=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Jump_8.png', 8, 3)
+idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png', 4, 3)
+walk=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png', 6, 3)
+run=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_run_6.png', 6, 3)
+jump=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Jump_8.png', 8, 3)
 onground=True
 
-background=cfiles.loadimagesize('D:/history/minecraft2D/background.jpg', screen.get_width(), screen.get_height())
+background=cfiles.loadimagesize('background.jpg', screen.get_width(), screen.get_height())
 
-gidle=cfiles.getcutpic('D:/history/minecraft2D/2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
-gwalk=cfiles.getcutpic('D:/history/minecraft2D/2plan/2 Owlet_Monster/Owlet_Monster_Walk_6.png',6,3)
-grun=cfiles.getcutpic('D:/history/minecraft2D/2plan/2 Owlet_Monster/Owlet_Monster_Run_6.png',6,3)
-gjump=cfiles.getcutpic('D:/history/minecraft2D/2plan/2 Owlet_Monster/Owlet_Monster_Jump_8.png',8,3)
-pix=cfiles.getcutpic('D:/history/minecraft2D/pixare.png',1,0.1)
+gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
+gwalk=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Walk_6.png',6,3)
+grun=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Run_6.png',6,3)
+gjump=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Jump_8.png',8,3)
+pix=cfiles.getcutpic('pixare.png',1,0.1)
 
 # все сразу
 tile_sizes=80
@@ -46,7 +46,7 @@ groundy=20
 damage=20
 screen_width=screen.get_width()
 screen_height=screen.get_height()
-drag_ob_inf=[0,0]
+drag_item=None
 
 # оптимизация(берем не все блоки, а только рядом)
 def get_colliding_blocks(player_rect):
@@ -140,8 +140,6 @@ class Ghost:
             self.x+=1
 
         self.animations[self.state].update()
-
-old_place=[]
 
 class Player:
     def __init__(self,x,y,speed):
@@ -345,28 +343,17 @@ while True:
                             inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'])
                             del lev_load.blocks[(x_ts,y_ts)]
             else:           #перемещение блоков в инв
-
-                for i in inventory.items:
-                    if i.count_res>0 and i.get_hitbox().collidepoint(pos):
-                            old_place=[i.xt,i.yt]
-                            drag_ob_inf=[
-                                i.name_res,
-                                i.count_res
-                            ]
+                selected_item=inventory.get_item_at_pos(pos)
+                if selected_item is not None and selected_item.count_res>0:
+                    drag_item=selected_item
+                    drag_item.moving = True
 
         if event.type==pygame.MOUSEBUTTONUP and event.button==1:
-            if inventory.inv_state:
-                for i in inventory.items:
-                    if drag_ob_inf!=[]:
-                        if i.count_res==0 and i.get_hitbox().collidepoint(pos):
-                            i.name_res=drag_ob_inf[0]
-                            i.count_res=drag_ob_inf[1]
-                            print(drag_ob_inf)
-                            drag_ob_inf=[]
-                            print("ok")
-
-                        if i.xt==old_place[0] and i.yt==old_place[1]:
-                            i.count_res=0
+            if inventory.inv_state and drag_item is not None:
+                target_item=inventory.get_item_at_pos(pos)
+                inventory.move_item(drag_item, target_item)
+                drag_item.moving = False
+                drag_item=None
 
     # юзание оптимизации
     render_damaged_blocks(screen,camerax,cameray)

@@ -10,16 +10,16 @@ d=w=a=s=False
 
 block_stages={}
 block_stage1=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 1.png',80,80)
-block_stage2=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 2.png',80,80)
-block_stage3=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 3 .png',80,80)
-block_stage4=cfiles.loadimagesize('break_blocks\блоки-removebg-preview 4.png',80,80)
+block_stage2=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 2.png',80,80)
+block_stage3=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 3 .png',80,80)
+block_stage4=cfiles.loadimagesize('break_blocks/блоки-removebg-preview 4.png',80,80)
 
 block_stages['20']=block_stage4
 block_stages['40']=block_stage3
 block_stages['60']=block_stage2
 block_stages['80']=block_stage1
 
-idle=cfiles.getcutpic('D:/craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
+idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 
 
@@ -33,12 +33,12 @@ camerax=cameray=0
 resourses=[]
 state_res=17
 
-tree_tex=pygame.image.load("D:/history/minecraft2D/tree_tex.jpg")
+tree_tex=pygame.image.load('tree_tex.jpg')
 leaf_tex=pygame.image.load('leaf_tex.png')
 
 blocks={}
 
-for i in os.listdir('editor/imgs/1 Tiles'):
+for i in sorted(os.listdir('editor/imgs/1 Tiles')):
     image=pygame.image.load('editor/imgs/1 Tiles/'+i)
     image=pygame.transform.scale(image,[tile_sizes,tile_sizes])
     resourses.append(image)
@@ -89,7 +89,7 @@ def change_size():
     image4=pygame.transform.scale(image4,[tile_sizes,tile_sizes])  
 
 
-    for i in os.listdir('editor/imgs/1 Tiles'):
+    for i in sorted(os.listdir('editor/imgs/1 Tiles')):
         image=pygame.image.load('editor/imgs/1 Tiles/'+i)
         image=pygame.transform.scale(image,[tile_sizes,tile_sizes])
         resourses.append(image)
@@ -190,12 +190,12 @@ def get_type(number):
     return(type)
 
 def save():
-    f=open('D:\history\minecraft2D\editor\levels\level1','wb')
+    f=open('editor/levels/level1','wb')
     pickle.dump([blocks,[camerax,cameray]],f)
     f.close()
 def load():
     global blocks,camerax,cameray
-    f=open('D:\history\minecraft2D\editor\levels\level1','rb')
+    f=open('editor/levels/level1','rb')
     load_game=pickle.load(f)
     blocks=load_game[0]
     camerax=load_game[1][0]
