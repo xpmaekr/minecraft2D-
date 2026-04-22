@@ -5,11 +5,15 @@ import cfiles
 import animation
 import lev_load
 import inventory
+import player_data
+import ui
 
 pygame.init()
 screen=pygame.display.set_mode([0,0],pygame.FULLSCREEN)
 lev_load.load()
 inventory.init_inventory()
+
+player_data.desk_sizes=pygame.display.get_desktop_sizes()[0]
 
 clock=pygame.time.Clock()
 
@@ -25,13 +29,31 @@ block_stages_cache[40]=block_stage3
 block_stages_cache[60]=block_stage2
 block_stages_cache[80]=block_stage1
 
+def god_mode_slot():
+    global gravity,damage
+    print('click')
+    if player_data.god_mode:
+        print('ok')
+        player_data.god_mode=False
+    else:
+        player_data.god_mode=True
+    if inventory.inv_state==False:
+        if player_data.god_mode==False:
+            gravity=0.2
+            damage=100
+        else:
+            gravity=0.5
+            damage=20
+
+red_button=cfiles.loadimagesize('D:/history/minecraft2D/red_button.png',255,70)
+green_button=cfiles.loadimagesize('D:/history/minecraft2D/green_button.png',255,70)
+
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png', 4, 3)
 walk=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png', 6, 3)
 run=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_run_6.png', 6, 3)
 jump=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Jump_8.png', 8, 3)
 onground=True
-
-background=cfiles.loadimagesize('background.jpg', screen.get_width(), screen.get_height())
+background=cfiles.loadimagesize('background.jpg', player_data.desk_sizes[0], player_data.desk_sizes[1])
 
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 gwalk=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Walk_6.png',6,3)
@@ -44,9 +66,15 @@ tile_sizes=80
 gravity=0.5
 groundy=20
 damage=20
-screen_width=screen.get_width()
-screen_height=screen.get_height()
+screen_width=player_data.desk_sizes[0]
+screen_height=player_data.desk_sizes[1]
 drag_item=None
+
+minecraft_font=pygame.font.Font('minecraft_font.ttf', 44)
+text_god_mode=minecraft_font.render('God mode', True, (255, 255, 255))
+
+god_mode_hitbox=pygame.Rect(0,0,
+                            511,141)
 
 # оптимизация(берем не все блоки, а только рядом)
 def get_colliding_blocks(player_rect):
@@ -267,7 +295,14 @@ for i in range(0, 1):
 timestart=time.time()
 count=0
 
+god_mode_button_red=ui.Image_button([0,0],red_button,screen)
+god_mode_button_red.slot=god_mode_slot
+
+god_mode_button_green=ui.Image_button([0,0],green_button,screen)
+god_mode_button_green.slot=god_mode_slot
+
 while True:
+    click=False
     if time.time()-timestart>=1:
         pygame.display.set_caption(str(count))
         timestart=time.time()
@@ -333,6 +368,7 @@ while True:
                 realplayer.kd=False
 
         if event.type==pygame.MOUSEBUTTONDOWN and event.button==1:
+            click=True
             if inventory.inv_state==False:
                 if (x_ts,y_ts) in lev_load.blocks:
                     rd=realplayer.damage_area()
@@ -375,6 +411,14 @@ while True:
 
     # юзание оптимизации
     render_damaged_blocks(screen,camerax,cameray)
-    
-    screen.blit(pix[0],pos)       
+
+    mimage=minecraft_font.render(str(pos),True,[0,0,0])
+    screen.blit(mimage,[0,player_data.desk_sizes[1]-mimage.get_height()])
+
+    if player_data.god_mode:
+        god_mode_button_green.render(click)
+    else:
+        god_mode_button_red.render(click)
+
+    screen.blit(pix[0],pos) 
     pygame.display.update()

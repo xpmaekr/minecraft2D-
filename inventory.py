@@ -1,6 +1,7 @@
 import pygame
 import cfiles
 import lev_load
+import player_data
 
 inventory=None
 craft_table=None
@@ -19,13 +20,17 @@ leaf=cfiles.loadimagesize('leaf_tex.png',lev_load.tile_sizes*1.7,lev_load.tile_s
 craft_table=pygame.image.load('crafting table.png')
 craft_table=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)   
 
+pygame.image.load('down_panel.png')
+down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
+
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 
 def init_inventory():
-    global inventory,grass,rock,items,craft_table_big
+    global inventory,grass,rock,items,craft_table_big,down_inventory
     craft_table_big=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',200,200)   
     inventory=cfiles.loadimagesize('inventory.jpg',1468,713)
+    down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
     inv_store.clear()
     items.clear()
     res_cache.clear()
@@ -51,7 +56,7 @@ class Item:
         self.name_res=name_res
         self.screen=screen
         self.count_res=count_res
-        self.font=pygame.font.Font(None, 24)
+        self.font=pygame.font.Font('minecraft_font.ttf', 24)
         self.moving = False
 
 
@@ -103,11 +108,14 @@ class Item:
 def render(screen):
     if inv_state == True:
         screen.blit(inventory, [10, 10])
-        screen.blit(craft_table_big, [1498, 200])
+        screen.blit(craft_table_big, [1400, 780])
     
         for i in items:
             i.render()
             i.get_hitbox()
+    
+    else:
+        screen.blit(down_inventory,[player_data.desk_sizes[0]/2-down_inventory.get_width()/2,player_data.desk_sizes[1]-down_inventory.get_height()])
 
 table_box=pygame.Rect(1478,200,
                     200,
