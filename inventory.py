@@ -18,7 +18,7 @@ leaf=pygame.image.load('leaf_tex.png')
 leaf=cfiles.loadimagesize('leaf_tex.png',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)
 
 craft_table=pygame.image.load('crafting table.png')
-craft_table=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)   
+craft_table=cfiles.loadimagesize('crafting table.png',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)   
 
 pygame.image.load('down_panel.png')
 down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
@@ -28,7 +28,7 @@ gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 
 def init_inventory():
     global inventory,grass,rock,items,craft_table_big,down_inventory
-    craft_table_big=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',200,200)   
+    craft_table_big=cfiles.loadimagesize('crafting table.png',200,200)   
     inventory=cfiles.loadimagesize('inventory.jpg',1468,713)
     down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
     inv_store.clear()

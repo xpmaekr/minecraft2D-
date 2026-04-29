@@ -31,22 +31,20 @@ block_stages_cache[80]=block_stage1
 
 def god_mode_slot():
     global gravity,damage
-    print('click')
-    if player_data.god_mode:
-        print('ok')
-        player_data.god_mode=False
-    else:
-        player_data.god_mode=True
     if inventory.inv_state==False:
-        if player_data.god_mode==False:
-            gravity=0.2
-            damage=100
+        if player_data.god_mode:
+            player_data.god_mode=False
         else:
+            player_data.god_mode=True
+        if player_data.god_mode==False:
             gravity=0.5
             damage=20
+        else:
+            gravity=0.2
+            damage=100
 
-red_button=cfiles.loadimagesize('D:/history/minecraft2D/red_button.png',255,70)
-green_button=cfiles.loadimagesize('D:/history/minecraft2D/green_button.png',255,70)
+red_button=cfiles.loadimagesize('red_button.png',255,70)
+green_button=cfiles.loadimagesize('green_button.png',255,70)
 
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png', 4, 3)
 walk=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Walk_6.png', 6, 3)
