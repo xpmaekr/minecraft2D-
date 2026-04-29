@@ -36,7 +36,7 @@ leaf=pygame.image.load('leaf_tex.png')
 leaf=cfiles.loadimagesize('leaf_tex.png',80,80)
 
 craft_table=pygame.image.load('crafting table.png')
-craft_table=cfiles.loadimagesize('D:/history/minecraft2D/crafting table.png',80,80)   
+craft_table=cfiles.loadimagesize('crafting table.png',80,80)   
 
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
