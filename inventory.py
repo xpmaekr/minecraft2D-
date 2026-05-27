@@ -139,7 +139,7 @@ def render_down_panel_items(screen):
     panel_x, panel_y = get_down_panel_pos()
     
     for i in range(down_panel_slots):
-        item = items[i]
+        item = items[27+i]
         if item.count_res == 0 or item.name_res is None or item.name_res not in res_cache:
             continue
         
@@ -151,12 +151,12 @@ def render_down_panel_items(screen):
             mpos = pygame.mouse.get_pos()
             res_x = mpos[0] - res_cache[item.name_res].get_width() // 2
             res_y = mpos[1] - res_cache[item.name_res].get_height() // 2
-            screen.blit(res_cache[item.name_res], (res_x, res_y))
+            screen.blit(pygame.transform.scale(res_cache[item.name_res],[56,56],), (res_x, res_y))
             res_cache[item.name_res].set_alpha(255)
             text = item.font.render(str(item.count_res), True, (255, 255, 255))
             screen.blit(text, (res_x + 10, res_y + 30))
         else:
-            screen.blit(res_cache[item.name_res], (slot_x, slot_y))
+            screen.blit(pygame.transform.scale(res_cache[item.name_res],[56,56],), (slot_x, slot_y))
             text = item.font.render(str(item.count_res), True, (255, 255, 255))
             screen.blit(text, (slot_x + 15, slot_y + 35))
     
