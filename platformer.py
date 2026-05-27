@@ -324,7 +324,7 @@ while True:
     realplayer.update()
 
     inventory.render(screen)
-    inventory.render_down_inv(screen)
+    inventory.render_down_panel_items(screen)
 
     # оптимизация проверки врага
     for i in enemies:    
