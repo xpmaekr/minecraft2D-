@@ -324,6 +324,7 @@ while True:
     realplayer.update()
 
     inventory.render(screen)
+    inventory.render_down_inv(screen)
 
     # оптимизация проверки врага
     for i in enemies:    
@@ -380,7 +381,7 @@ while True:
                 
 
                 for i in inventory.items:
-                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3:
+                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3: #крафт верстака
 
                         if i.count_res==4:
                             i.count_res=0

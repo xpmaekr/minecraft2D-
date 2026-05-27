@@ -10,6 +10,7 @@ inv_store=[]
 inv_n=0
 items=[]
 res_cache={}
+sm_res_cache={}
 
 tree=pygame.image.load('tree_tex.jpg')
 tree=cfiles.loadimagesize('tree_tex.jpg',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)   
@@ -25,6 +26,9 @@ down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
 
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
+
+detailed_block=cfiles.loadimagesize('detailed_block' \
+'')
 
 def init_inventory():
     global inventory,grass,rock,items,craft_table_big,down_inventory
@@ -152,4 +156,13 @@ def add_type(res_type,count):
             i.name_res = res_type
             i.count_res += count
             res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
+
+            sm_res_cache[res_type]=pygame.transform.scale(res_cache[res_type],[58,58])
             return
+
+
+        
+def render_down_inv(screen):
+    for i in items:
+        if i.yt==3 and i.count_res>0:
+            screen.blit(sm_res_cache[i.name_res],[player_data.desk_sizes[0]/2-down_inventory.get_width()/2+i.xt*65+4,screen.get_height()-70])
