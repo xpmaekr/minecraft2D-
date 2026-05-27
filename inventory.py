@@ -43,7 +43,7 @@ def init_inventory():
     for i in range(36):
         inv_store.append({'type':'?', 'count':0})   
     for i in range(36):
-        item=Item(i%9,i//9,None,0,pygame.display.get_surface())
+        item=Item(i%9,i//9,None,0,pygame.display.get_surface(),i)
         items.append(item)
         
 W = 153 # ширина одного слота в инвентаре
@@ -55,7 +55,7 @@ down_panel_slot_height = 66  # высота слота в нижней пане�
 down_panel_slots = 9  # количество слотов в нижней панели
 
 class Item:
-    def __init__(self, xt, yt, name_res, count_res, screen):
+    def __init__(self, xt, yt, name_res, count_res, screen,index):
         self.xt=xt
         self.yt=yt
         self.name_res=name_res
@@ -63,6 +63,7 @@ class Item:
         self.count_res=count_res
         self.font=pygame.font.Font('minecraft_font.ttf', 24)
         self.moving = False
+        self.index = index
 
 
     def render(self):
@@ -108,7 +109,7 @@ class Item:
         return hitbox
     
     def __repr__(self):
-        return(f'count= {self.count_res} name= {self.name_res}')
+        return(f'count= {self.count_res} name= {self.name_res} index= {self.index}')
 
 def get_down_panel_pos():
     """Возвращает позицию нижней панели"""
@@ -199,9 +200,40 @@ def move_item(source_item, target_item):
     return True
 
 def add_type(res_type,count):
+
     for i in items:
-        if i.name_res == res_type:
+        if i.name_res == res_type and i.index>26:
             i.count_res += count
+            
+            print(1)
+            res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
+            return
+        
+    for i in items:
+        if i.count_res == 0 and i.index>26:
+            i.count_res += count
+            i.name_res = res_type
+            
+            print(1)
+            res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
+            return
+        
+
+    for i in items:
+        if i.name_res == res_type and i.index<=26:
+            i.count_res += count
+            
+            print(1)
+            res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
+            return
+
+    for i in items:
+        if i.count_res==0 and i.index<=26:
+            i.count_res += count
+            i.name_res = res_type    
+            
+            print(1)
+            res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
             return
     
     for i in items:
@@ -209,4 +241,6 @@ def add_type(res_type,count):
             i.name_res = res_type
             i.count_res += count
             res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
+            
+            print(1)
             return

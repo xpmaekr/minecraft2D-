@@ -370,23 +370,24 @@ while True:
         if event.type==pygame.MOUSEBUTTONDOWN and event.button==1:
             click=True
             if inventory.inv_state==False:
-                #проверяем нижнюю панель нижнюю панель
+                #проверяем нижнюю панель 
                 down_slot = inventory.get_down_panel_slot_at_pos(pos)
                 if down_slot is not None:
                     selected_item = inventory.items[down_slot]
                     if selected_item.count_res > 0:
                         drag_item = selected_item
                         drag_item.moving = True
-                #тогда проверяем блоки в мире проверяем блоки в мире
+                #тогда проверяем блоки в мире
                 elif (x_ts,y_ts) in lev_load.blocks:
                     rd=realplayer.damage_area()
                     if rd.collidepoint([pos[0]+camerax,pos[1]+cameray]):
                         lev_load.blocks[(x_ts,y_ts)]['hp']-=damage
                         if lev_load.blocks[(x_ts,y_ts)]['hp']<1:
-                            lev_load.blocks[(x_ts,y_ts)]['hp']-=damage
                             inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'],1)
                             del lev_load.blocks[(x_ts,y_ts)]
-            else:           #перемещение блоков в инв
+                
+            else:         
+                #перемещение блоков в инв
                 for i in inventory.items:
                     if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3:
                         if i.count_res==4:
