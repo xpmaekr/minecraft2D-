@@ -10,7 +10,6 @@ inv_store=[]
 inv_n=0
 items=[]
 res_cache={}
-sm_res_cache={}
 
 tree=pygame.image.load('tree_tex.jpg')
 tree=cfiles.loadimagesize('tree_tex.jpg',lev_load.tile_sizes*1.7,lev_load.tile_sizes*1.7)   
@@ -26,9 +25,6 @@ down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
 
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
-
-detailed_block=cfiles.loadimagesize('detailed_block' \
-'')
 
 def init_inventory():
     global inventory,grass,rock,items,craft_table_big,down_inventory
@@ -52,6 +48,11 @@ def init_inventory():
         
 W = 153 # ширина одного слота в инвентаре
 H = 153 # высота одного слота в инвентаре
+
+# Константы для нижней панели
+down_panel_slot_width = 66  # ширина слота в нижней панели
+down_panel_slot_height = 66  # высота слота в нижней панели
+down_panel_slots = 9  # количество слотов в нижней панели
 
 class Item:
     def __init__(self, xt, yt, name_res, count_res, screen):
@@ -108,6 +109,56 @@ class Item:
     
     def __repr__(self):
         return(f'count= {self.count_res} name= {self.name_res}')
+
+def get_down_panel_pos():
+    """Возвращает позицию нижней панели"""
+    return (player_data.desk_sizes[0]/2-down_inventory.get_width()/2, player_data.desk_sizes[1]-down_inventory.get_height())
+
+def get_down_panel_slot_at_pos(pos):
+    #получаем слот по позиции мыши
+    if inv_state:  #не работаем с нижней панелью если открыт основной инвентарь
+        return None
+    
+    panel_x, panel_y = get_down_panel_pos()
+    
+    #проверяем, находится мышь над нижней панелью или нет
+    if not (panel_x <= pos[0] <= panel_x + down_inventory.get_width() and 
+            panel_y <= pos[1] <= panel_y + down_inventory.get_height()):
+        return None
+    
+    #вычисляем
+    slot_x = int((pos[0] - panel_x) / down_panel_slot_width)
+    
+    if 0 <= slot_x < down_panel_slots:
+        return slot_x
+    
+    return None
+
+def render_down_panel_items(screen):
+    #рендер нижней панели
+    panel_x, panel_y = get_down_panel_pos()
+    
+    for i in range(down_panel_slots):
+        item = items[i]
+        if item.count_res == 0 or item.name_res is None or item.name_res not in res_cache:
+            continue
+        
+        slot_x = panel_x + i * down_panel_slot_width + 5
+        slot_y = panel_y + 5
+        
+        if item.moving:
+            res_cache[item.name_res].set_alpha(100)
+            mpos = pygame.mouse.get_pos()
+            res_x = mpos[0] - res_cache[item.name_res].get_width() // 2
+            res_y = mpos[1] - res_cache[item.name_res].get_height() // 2
+            screen.blit(res_cache[item.name_res], (res_x, res_y))
+            res_cache[item.name_res].set_alpha(255)
+            text = item.font.render(str(item.count_res), True, (255, 255, 255))
+            screen.blit(text, (res_x + 10, res_y + 30))
+        else:
+            screen.blit(res_cache[item.name_res], (slot_x, slot_y))
+            text = item.font.render(str(item.count_res), True, (255, 255, 255))
+            screen.blit(text, (slot_x + 15, slot_y + 35))
     
 def render(screen):
     if inv_state == True:
@@ -119,7 +170,9 @@ def render(screen):
             i.get_hitbox()
     
     else:
-        screen.blit(down_inventory,[player_data.desk_sizes[0]/2-down_inventory.get_width()/2,player_data.desk_sizes[1]-down_inventory.get_height()])
+        panel_pos = get_down_panel_pos()
+        screen.blit(down_inventory, panel_pos)
+        render_down_panel_items(screen)
 
 table_box=pygame.Rect(1478,200,
                     200,
@@ -156,13 +209,4 @@ def add_type(res_type,count):
             i.name_res = res_type
             i.count_res += count
             res_cache[res_type] = globals()[res_type]  #кешируем 1 раз
-
-            sm_res_cache[res_type]=pygame.transform.scale(res_cache[res_type],[58,58])
             return
-
-
-        
-def render_down_inv(screen):
-    for i in items:
-        if i.yt==3 and i.count_res>0:
-            screen.blit(sm_res_cache[i.name_res],[player_data.desk_sizes[0]/2-down_inventory.get_width()/2+i.xt*65+4,screen.get_height()-70])

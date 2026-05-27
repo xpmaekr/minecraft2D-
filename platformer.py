@@ -369,7 +369,15 @@ while True:
         if event.type==pygame.MOUSEBUTTONDOWN and event.button==1:
             click=True
             if inventory.inv_state==False:
-                if (x_ts,y_ts) in lev_load.blocks:
+                #проверяем нижнюю панель нижнюю панель
+                down_slot = inventory.get_down_panel_slot_at_pos(pos)
+                if down_slot is not None:
+                    selected_item = inventory.items[down_slot]
+                    if selected_item.count_res > 0:
+                        drag_item = selected_item
+                        drag_item.moving = True
+                #тогда проверяем блоки в мире проверяем блоки в мире
+                elif (x_ts,y_ts) in lev_load.blocks:
                     rd=realplayer.damage_area()
                     if rd.collidepoint([pos[0]+camerax,pos[1]+cameray]):
                         lev_load.blocks[(x_ts,y_ts)]['hp']-=damage
@@ -378,28 +386,39 @@ while True:
                             inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'],1)
                             del lev_load.blocks[(x_ts,y_ts)]
             else:           #перемещение блоков в инв
-                
-
                 for i in inventory.items:
-                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3: #крафт верстака
-
+                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3:
                         if i.count_res==4:
                             i.count_res=0
                         else:
                             i.count_res-=4
-                        
                         inventory.add_type('craft_table',1)                      
-
                     if i.count_res>0 and i.get_hitbox().collidepoint(pos):
-                            old_place=[i.xt,i.yt]
-                            drag_ob_inf=[
-                                i.name_res,
-                                i.count_res
-                            ]
+                        old_place=[i.xt,i.yt]
+                        drag_ob_inf=[i.name_res, i.count_res]
+                
                 selected_item=inventory.get_item_at_pos(pos)
                 if selected_item is not None and selected_item.count_res>0:
                     drag_item=selected_item
                     drag_item.moving = True
+
+        if event.type==pygame.MOUSEBUTTONUP and event.button==1:
+            if drag_item is not None:
+                #проверка опустили мышь в нижней панели или нет
+                down_slot = inventory.get_down_panel_slot_at_pos(pos)
+                if down_slot is not None and not inventory.inv_state:
+                    #копируем предметы в нижней панели
+                    target_item = inventory.items[down_slot]
+                    if drag_item != target_item:
+                        drag_item.xt, target_item.xt = target_item.xt, drag_item.xt
+                        drag_item.yt, target_item.yt = target_item.yt, drag_item.yt
+                #если находимся в основном инвентаре
+                elif inventory.inv_state:
+                    target_item=inventory.get_item_at_pos(pos)
+                    inventory.move_item(drag_item, target_item)
+                
+                drag_item.moving = False
+                drag_item=None
 
         if event.type==pygame.MOUSEBUTTONUP and event.button==1:
             if inventory.inv_state and drag_item is not None:
