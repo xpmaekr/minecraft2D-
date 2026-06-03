@@ -23,6 +23,9 @@ craft_table=cfiles.loadimagesize('crafting table.png',lev_load.tile_sizes*1.7,le
 pygame.image.load('down_panel.png')
 down_inventory=cfiles.loadimagesize('down_panel.png',598,66)
 
+detailed_block=pygame.image.load("detailed_block.png")
+detailed_block=cfiles.loadimagesize('detailed_block.png', 110, 110)
+
 idle=cfiles.getcutpic('craftpix-net-622999-free-pixel-art-tiny-hero-sprites/1 Pink_Monster/Pink_Monster_Idle_4.png',4,3)
 gidle=cfiles.getcutpic('2plan/2 Owlet_Monster/Owlet_Monster_Idle_4.png',4,3)
 
@@ -53,6 +56,9 @@ H = 153 # высота одного слота в инвентаре
 down_panel_slot_width = 66  # ширина слота в нижней панели
 down_panel_slot_height = 66  # высота слота в нижней панели
 down_panel_slots = 9  # количество слотов в нижней панели
+
+selected_slot=1
+
 
 class Item:
     def __init__(self, xt, yt, name_res, count_res, screen,index):
@@ -160,6 +166,8 @@ def render_down_panel_items(screen):
             screen.blit(pygame.transform.scale(res_cache[item.name_res],[56,56],), (slot_x, slot_y))
             text = item.font.render(str(item.count_res), True, (255, 255, 255))
             screen.blit(text, (slot_x + 15, slot_y + 35))
+
+    screen.blit(detailed_block,(panel_x+66*(selected_slot-1)-20,panel_y-21))
     
 def render(screen):
     if inv_state == True:

@@ -428,6 +428,19 @@ while True:
                 inventory.move_item(drag_item, target_item)
                 drag_item.moving = False
                 drag_item=None
+            
+        if event.type==pygame.MOUSEWHEEL and event.y<0:
+            inventory.selected_slot+=1
+        if event.type==pygame.MOUSEWHEEL and event.y>0:
+            inventory.selected_slot-=1
+
+        if inventory.selected_slot<1:
+            inventory.selected_slot=9
+
+        if inventory.selected_slot>9:
+            inventory.selected_slot=1
+            
+        
 
     # юзание оптимизации
     render_damaged_blocks(screen,camerax,cameray)
@@ -440,5 +453,5 @@ while True:
     else:
         god_mode_button_red.render(click)
 
-    screen.blit(pix[0],pos) 
+    screen.blit(pix[0],pos)
     pygame.display.update()
