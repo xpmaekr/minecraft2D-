@@ -47,7 +47,31 @@ resourses.append(tree)
 resourses.append(leaf)
 resourses.append(craft_table)
 
+#для превращения типа блока в номер в resourses
+type_to_number = {
+    'tree': len(resourses) - 3,
+    'leaf': len(resourses) - 2,
+    'craft_table': len(resourses) - 1,
+}
+
+def place_block(x, y, block_type):
+    """Ставит блок указанного типа на координаты (x, y)"""
+    x*=tile_sizes
+    y*=tile_sizes
+    if (x, y) not in blocks:
+        if block_type in type_to_number:
+            blocks[(x, y)] = {
+                'number': type_to_number[block_type],
+                'x': x,
+                'y': y,
+                'hp': 100,
+                'type': block_type
+            }
+            return True
+    return False
+
 def render_blocks(screen):
+    global camerax , cameray
     for i in blocks.values():
         screen.blit(resourses[i['number']],[i['x']*tile_sizes-camerax,i['y']*tile_sizes-cameray])
     pos=pygame.mouse.get_pos()
@@ -57,3 +81,7 @@ def render_blocks(screen):
 
     if (x,y) in blocks:
         pygame.draw.rect(screen,[0,0,0],[x*tile_sizes-camerax,y*tile_sizes-cameray,tile_sizes,tile_sizes],2)
+
+    else:
+        # рисуем зелёный прямоугольник если можно блок поставить
+        pygame.draw.rect(screen,[0,255,0],[x*tile_sizes-camerax,y*tile_sizes-cameray,tile_sizes,tile_sizes],2)
