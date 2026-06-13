@@ -385,40 +385,7 @@ while True:
                         if lev_load.blocks[(x_ts,y_ts)]['hp']<1:
                             inventory.add_type(lev_load.blocks[(x_ts,y_ts)]['type'],1)
                             del lev_load.blocks[(x_ts,y_ts)]
-
-                # ставим блок на пустое место
-                else:
-                    rd=realplayer.damage_area()
-                    if rd.collidepoint([pos[0]+camerax,pos[1]+cameray]):
-                        print('ok')
-                        # получаем выбранный слот и предмет в нём
-                        selected_item = inventory.items[27 + inventory.selected_slot - 1]
-                        print(selected_item.count_res , selected_item.name_res)
-                        if selected_item.count_res > 0 and selected_item.name_res:
-                            print('ok1')
-                            # ставим блок
-                            if lev_load.place_block(int(x_ts), int(y_ts), selected_item.name_res):
-                                print('ok2')
-                                # уменьшаем количество предмета
-                                selected_item.count_res -= 1
-                
-            else:         
-                #перемещение блоков в инв
-                for i in inventory.items:
-                    if i.name_res=="tree" and inventory.table_box.collidepoint(pos) and i.count_res>3:
-                        if i.count_res==4:
-                            i.count_res=0
-                        else:
-                            i.count_res-=4
-                        inventory.add_type('craft_table',1)                      
-                    if i.count_res>0 and i.get_hitbox().collidepoint(pos):
-                        old_place=[i.xt,i.yt]
-                        drag_ob_inf=[i.name_res, i.count_res]
-                
-                selected_item=inventory.get_item_at_pos(pos)
-                if selected_item is not None and selected_item.count_res>0:
-                    drag_item=selected_item
-                    drag_item.moving = True
+            
 
         if event.type==pygame.MOUSEBUTTONUP and event.button==1:
             if drag_item is not None:
@@ -456,7 +423,24 @@ while True:
         if inventory.selected_slot>9:
             inventory.selected_slot=1
             
-        
+        if event.type==pygame.MOUSEBUTTONDOWN and event.button==3:
+                # ставим блок на пустое место
+                if inventory.inv_state==False:
+                    rd=realplayer.damage_area()
+                    if rd.collidepoint([pos[0]+camerax,pos[1]+cameray]):
+                        print('ok')
+                        # получаем выбранный слот и предмет в нём
+                        selected_item = inventory.items[27 + inventory.selected_slot - 1]
+                        print(selected_item.count_res , selected_item.name_res)
+                        if selected_item.count_res > 0 and selected_item.name_res:
+                            print('ok1')
+                            # ставим блок
+                            if lev_load.place_block(int(x_ts), int(y_ts), selected_item.name_res):
+                                print('ok2')
+                                # уменьшаем количество предмета
+                                selected_item.count_res -= 1
+
+
 
     # юзание оптимизации
     render_damaged_blocks(screen,camerax,cameray)

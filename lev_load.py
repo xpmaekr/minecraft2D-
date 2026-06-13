@@ -47,17 +47,19 @@ resourses.append(tree)
 resourses.append(leaf)
 resourses.append(craft_table)
 
+print(resourses)
+
 #для превращения типа блока в номер в resourses
 type_to_number = {
     'tree': len(resourses) - 3,
     'leaf': len(resourses) - 2,
     'craft_table': len(resourses) - 1,
+    'grass' : 1,
+    'rock' : 2
 }
 
 def place_block(x, y, block_type):
-    """Ставит блок указанного типа на координаты (x, y)"""
-    x*=tile_sizes
-    y*=tile_sizes
+    #ставит блоки на координаты
     if (x, y) not in blocks:
         if block_type in type_to_number:
             blocks[(x, y)] = {
