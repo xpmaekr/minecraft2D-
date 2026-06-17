@@ -58,9 +58,18 @@ type_to_number = {
     'rock' : 2
 }
 
-def place_block(x, y, block_type):
+def place_block(x, y, block_type,player=None):
     #ставит блоки на координаты
     if (x, y) not in blocks:
+
+        # проверяем, не стоит ли игрок на месте блока
+        if player is not None:
+            player_block_x = int(player.x // tile_sizes)
+            player_block_y = int(player.y // tile_sizes)
+            if x == player_block_x and y == player_block_y:
+                return False
+        
+
         if block_type in type_to_number:
             blocks[(x, y)] = {
                 'number': type_to_number[block_type],
@@ -73,6 +82,9 @@ def place_block(x, y, block_type):
     return False
 
 def render_blocks(screen):
+    
+    screen.blit(resourses[i['number']],[i['x']*tile_sizes-camerax,i['y']*tile_sizes-cameray])
+
     global camerax , cameray
     for i in blocks.values():
         screen.blit(resourses[i['number']],[i['x']*tile_sizes-camerax,i['y']*tile_sizes-cameray])
