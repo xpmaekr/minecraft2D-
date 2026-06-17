@@ -7,6 +7,46 @@ import lev_load
 import inventory
 import player_data
 import ui
+import pickle
+
+def save():
+
+    global realplayer, camerax, cameray
+    f=open('savings','wb')
+
+    save_data={
+        'blocks': lev_load.blocks,
+        'camerax': camerax,
+        'cameray': cameray,
+        'player_x': realplayer.x,
+        'player_y': realplayer.y,
+        'player_vy': realplayer.vy,
+        'inventory': [{'name': item.name_res, 'count': item.count_res} for item in inventory.items],
+        'selected_slot': inventory.selected_slot
+    }
+
+    pickle.dump(save_data, f)
+    f.close()
+
+def load():
+
+    global realplayer, camerax, cameray
+    f=open('savings','rb')
+    load_data=pickle.load(f)
+    
+    lev_load.blocks=load_data['blocks']
+    camerax=load_data['camerax']
+    cameray=load_data['cameray']
+    realplayer.x=load_data['player_x']
+    realplayer.y=load_data['player_y']
+    realplayer.vy=load_data['player_vy']
+    
+    for i, item_data in enumerate(load_data['inventory']):
+        inventory.items[i].name_res=item_data['name']
+        inventory.items[i].count_res=item_data['count']
+    
+    inventory.selected_slot=load_data['selected_slot']
+    f.close()
 
 pygame.init()
 screen=pygame.display.set_mode([0,0],pygame.FULLSCREEN)
@@ -360,6 +400,13 @@ while True:
                 else:
                     inventory.inv_state=True
 
+            
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_F5:  # F5 для сохранения
+                    save()
+                if event.key==pygame.K_F9:  # F9 для загрузки
+                    load()
+
         if event.type==pygame.KEYUP:
             if event.key==pygame.K_a:
                 realplayer.ka=False
@@ -428,15 +475,12 @@ while True:
                 if inventory.inv_state==False:
                     rd=realplayer.damage_area()
                     if rd.collidepoint([pos[0]+camerax,pos[1]+cameray]):
-                        print('ok')
                         # получаем выбранный слот и предмет в нём
                         selected_item = inventory.items[27 + inventory.selected_slot - 1]
                         print(selected_item.count_res , selected_item.name_res)
-                        if selected_item.count_res > 0 and selected_item.name_res:
-                            print('ok1')
+                        if selected_item.count_res > 0 and selected_item.name_res:                            
                             # ставим блок
                             if lev_load.place_block(int(x_ts), int(y_ts), selected_item.name_res):
-                                print('ok2')
                                 # уменьшаем количество предмета
                                 selected_item.count_res -= 1
 
@@ -454,4 +498,6 @@ while True:
         god_mode_button_red.render(click)
 
     screen.blit(pix[0],pos)
-    pygame.display.update() 
+    pygame.display.update()
+
+    
