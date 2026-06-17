@@ -107,6 +107,7 @@ damage=20
 screen_width=player_data.desk_sizes[0]
 screen_height=player_data.desk_sizes[1]
 drag_item=None
+pause=False
 
 minecraft_font=pygame.font.Font('minecraft_font.ttf', 44)
 text_god_mode=minecraft_font.render('God mode', True, (255, 255, 255))
@@ -361,7 +362,9 @@ while True:
     lev_load.render_blocks(screen)
 
     realplayer.render()
-    realplayer.update()
+    if not pause:
+        realplayer.update()
+
 
     inventory.render(screen)
     if inventory.inv_state==False:
@@ -370,12 +373,14 @@ while True:
     # оптимизация проверки врага
     for i in enemies:    
         if is_enemy_visible(i, realplayer):
-            i.update() 
+            if not pause:
+                i.update() 
+                i.ai()
             i.render()
-            i.ai()                      
 
-    camerax+=(realplayer.x-screen_width/2-camerax)/50
-    cameray+=(realplayer.y-screen_height/2-cameray)/10
+    if not pause:
+        camerax+=(realplayer.x-screen_width/2-camerax)/50
+        cameray+=(realplayer.y-screen_height/2-cameray)/10                   
     
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -383,9 +388,13 @@ while True:
             exit() 
         
         if event.type==pygame.KEYDOWN:
+
+            if event.key==pygame.K_ESCAPE:
+                pause=not pause
+            
             if event.key==pygame.K_w or event.key==pygame.K_SPACE:
-                if onground==True:
-                    onground=False
+                if onground and not pause:
+                    onground = not onground
                     realplayer.vy=-10          
                 
             if event.key==pygame.K_a:
@@ -395,10 +404,7 @@ while True:
                 realplayer.kd=True
 
             if event.key==pygame.K_e:
-                if inventory.inv_state==True:
-                    inventory.inv_state=False
-                else:
-                    inventory.inv_state=True
+                inventory.inv_state = not inventory.inv_state
 
             
             if event.type==pygame.KEYDOWN:
@@ -416,7 +422,7 @@ while True:
 
         if event.type==pygame.MOUSEBUTTONDOWN and event.button==1:
             click=True
-            if inventory.inv_state==False:
+            if inventory.inv_state==False and not pause:
                 #проверяем нижнюю панель 
                 down_slot = inventory.get_down_panel_slot_at_pos(pos)
                 if down_slot is not None:
@@ -498,6 +504,12 @@ while True:
         god_mode_button_red.render(click)
 
     screen.blit(pix[0],pos)
+
+    if pause:
+        pause_text=minecraft_font.render('PAUSE', True, (0, 0, 0))
+        pause_rect=pause_text.get_rect(center=(screen_width//2, screen_height//2))
+        screen.blit(pause_text, pause_rect)
+
     pygame.display.update()
 
     
