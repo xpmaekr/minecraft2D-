@@ -233,6 +233,7 @@ class Player:
 
     def render(self):
         self.animations[self.state].render(screen, self.x-camerax, self.y-cameray, self.state_flip)
+        pygame.draw.rect(screen,[0,0,0],self.get_hitbox().move(-camerax , -cameray),5)
 
     def update(self):
         global onground
@@ -274,6 +275,10 @@ class Player:
             self.ntimer_run=0
             
         self.animations[self.state].update()
+
+    def get_hitbox(self):
+        htbplayer=pygame.Rect([self.x,self.y],self.animations[self.state].get_size()).inflate(-20,0)
+        return htbplayer
     
     def collisionx(self):
         nowanim=self.animations[self.state]
@@ -494,7 +499,7 @@ while True:
                         print(selected_item.count_res , selected_item.name_res)
                         if selected_item.count_res > 0 and selected_item.name_res:                            
                             # ставим блок
-                            if lev_load.place_block(int(x_ts), int(y_ts), selected_item.name_res):
+                            if lev_load.place_block(int(x_ts), int(y_ts), selected_item.name_res,realplayer):
                                 # уменьшаем количество предмета
                                 selected_item.count_res -= 1
 

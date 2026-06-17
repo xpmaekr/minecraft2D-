@@ -54,20 +54,18 @@ type_to_number = {
     'tree': len(resourses) - 3,
     'leaf': len(resourses) - 2,
     'craft_table': len(resourses) - 1,
-    'grass' : 1,
-    'rock' : 2
+    'grass' : 4,
+    'rock' : 29
 }
 
-def place_block(x, y, block_type,player=None):
+def place_block(x, y, block_type,player):
     #ставит блоки на координаты
     if (x, y) not in blocks:
 
         # проверяем, не стоит ли игрок на месте блока
-        if player is not None:
-            player_block_x = int(player.x // tile_sizes)
-            player_block_y = int(player.y // tile_sizes)
-            if x == player_block_x and y == player_block_y:
-                return False
+
+        if player.get_hitbox().colliderect(pygame.Rect([x * tile_sizes,y * tile_sizes] , [tile_sizes ,tile_sizes ])) :
+            return False
         
 
         if block_type in type_to_number:
