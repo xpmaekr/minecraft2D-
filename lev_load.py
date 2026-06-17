@@ -82,10 +82,8 @@ def place_block(x, y, block_type,player=None):
     return False
 
 def render_blocks(screen):
-    
-    screen.blit(resourses[i['number']],[i['x']*tile_sizes-camerax,i['y']*tile_sizes-cameray])
-
     global camerax , cameray
+
     for i in blocks.values():
         screen.blit(resourses[i['number']],[i['x']*tile_sizes-camerax,i['y']*tile_sizes-cameray])
     pos=pygame.mouse.get_pos()

@@ -222,6 +222,8 @@ class Player:
         self.ntimer_run=0
         self.jump_index=0
         self.timer_jump=0
+        self.can_jump=True
+
         self.animations={
             'idle': animation.Animation(idle, 8),
             'walk': animation.Animation(walk, 8),
@@ -252,17 +254,23 @@ class Player:
             if self.state!='jump':
                 self.jump_index=0
                 self.timer_jump=0
+                self.can_jump=True
             self.state='jump'
 
         elif self.ka==True and self.kd==True:
             self.state='idle'
-            self.ntimer_run=0          
+            self.ntimer_run=0
+            self.can_jump=True
+
         elif self.ka==True or self.kd==True:
             self.state='walk'
+            self.can_jump=True
             if self.ntimer_run>=40:
                 self.state='run'
+
         else:
             self.state='idle'
+            self.can_jump=True
             self.ntimer_run=0
             
         self.animations[self.state].update()
@@ -393,7 +401,7 @@ while True:
                 pause=not pause
             
             if event.key==pygame.K_w or event.key==pygame.K_SPACE:
-                if onground and not pause:
+                if onground and not pause and realplayer.can_jump:
                     onground = not onground
                     realplayer.vy=-10          
                 
