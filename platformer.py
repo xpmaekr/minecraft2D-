@@ -222,7 +222,7 @@ class Player:
         self.ntimer_run=0
         self.jump_index=0
         self.timer_jump=0
-        self.can_jump=True
+        self.time_in_air=0
 
         self.animations={
             'idle': animation.Animation(idle, 8),
@@ -251,11 +251,13 @@ class Player:
 
         self.ntimer_run+=1
 
+        self.time_in_air+=1
+
         if onground==False:          
             if self.state!='jump':
                 self.jump_index=0
                 self.timer_jump=0
-                self.can_jump=True
+                self.can_jump=False
             self.state='jump'
 
         elif self.ka==True and self.kd==True:
@@ -317,16 +319,21 @@ class Player:
             
             
             if tilehit.colliderect(htplayer):
+
                 if self.vy>0:  #падаем
                     onground=True
                     htplayer.bottom=tilehit.top
                     self.vy=0
                     self.y=htplayer.y
+
+                    self.time_in_air=0                   
+
                 elif self.vy<0:  #прыгаем
                     htplayer.top=tilehit.bottom
                     self.vy=0
                     self.y=htplayer.y
                     
+                    self.time_in_air+=1
         
         self.y=htplayer.y
 
@@ -406,7 +413,7 @@ while True:
                 pause=not pause
             
             if event.key==pygame.K_w or event.key==pygame.K_SPACE:
-                if onground and not pause and realplayer.can_jump:
+                if onground and not pause and realplayer.time_in_air<5:
                     onground = not onground
                     realplayer.vy=-10          
                 
